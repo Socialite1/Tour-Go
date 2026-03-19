@@ -11,7 +11,6 @@ body {
   background: #0f172a;
   color: white;
   margin: 0;
-  padding: 0;
 }
 
 header {
@@ -41,10 +40,6 @@ button {
   color: white;
   font-weight: bold;
   cursor: pointer;
-}
-
-.leaderboard {
-  margin-top: 30px;
 }
 
 .card {
@@ -87,10 +82,8 @@ button {
 
 <button onclick="submitForm()">Submit</button>
 
-<div class="leaderboard">
 <h3>Top Explorers</h3>
 <div id="board"></div>
-</div>
 
 </div>
 
@@ -114,28 +107,46 @@ function submitForm() {
   reader.onload = function () {
 
     // 🎯 POINT ENGINE
-    let points = 10; // base
+    let points = 10;
 
     if (file) points += 20;
 
-    const alreadyVisited = users.find(u => u.place === place);
-    if (!alreadyVisited) {
-      points += 30; // new location bonus
+    const userPlaces = users.find(u => u.email === email)?.places || [];
+    if (!userPlaces.includes(place)) {
+      points += 30;
     } else {
-      points += 5; // repeat visit
+      points += 5;
     }
 
-    const user = {
-      name,
-      email,
-      location,
-      place,
-      points,
-      image: reader.result,
-      badge: getBadge(points)
-    };
+    // 🔍 CHECK IF USER EXISTS
+    let existingUser = users.find(u => u.email === email);
 
-    users.push(user);
+    if (existingUser) {
+      // 🔁 UPDATE EXISTING USER
+      existingUser.points += points;
+      existingUser.name = name;
+      existingUser.location = location;
+      existingUser.image = file ? reader.result : existingUser.image;
+
+      if (!existingUser.places.includes(place)) {
+        existingUser.places.push(place);
+      }
+
+      existingUser.badge = getBadge(existingUser.points);
+
+    } else {
+      // 🆕 CREATE NEW USER
+      users.push({
+        name,
+        email,
+        location,
+        image: reader.result,
+        points: points,
+        badge: getBadge(points),
+        places: [place]
+      });
+    }
+
     localStorage.setItem("users", JSON.stringify(users));
     renderLeaderboard();
   };
@@ -148,8 +159,9 @@ function submitForm() {
 }
 
 function getBadge(points) {
-  if (points > 100) return "🔥 Legend";
-  if (points > 50) return "⭐ Explorer";
+  if (points > 300) return "👑 King";
+  if (points > 150) return "🔥 Legend";
+  if (points > 80) return "⭐ Explorer";
   return "🌱 Starter";
 }
 
@@ -171,7 +183,7 @@ function renderLeaderboard() {
       <div>
         <div><strong>${user.name}</strong></div>
         <div>${user.points} pts • ${user.badge}</div>
-        <small>${user.place}</small>
+        <small>${user.places.length} places visited</small>
       </div>
     `;
 
