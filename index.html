@@ -11,6 +11,7 @@ body {
   background: #0f172a;
   color: white;
   margin: 0;
+  padding: 0;
 }
 
 header {
@@ -40,6 +41,10 @@ button {
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+.leaderboard {
+  margin-top: 30px;
 }
 
 .card {
@@ -74,8 +79,10 @@ button {
 
 <button onclick="submitForm()">Submit</button>
 
+<div class="leaderboard">
 <h3>Top Explorers</h3>
 <div id="board"></div>
+</div>
 
 </div>
 
@@ -93,55 +100,52 @@ function submitForm() {
     return;
   }
 
-  processSubmission();
+  // 🎯 POINT ENGINE
+  let points = 10;
 
-  function processSubmission() {
+  const existingUser = users.find(u => u.email === email);
+  const userPlaces = existingUser?.places || [];
 
-    // 🎯 POINT ENGINE
-    let points = 10;
-
-    const existingUser = users.find(u => u.email === email);
-    const userPlaces = existingUser?.places || [];
-
-    if (!userPlaces.includes(place)) {
-      points += 30;
-    } else {
-      points += 5;
-    }
-
-    if (existingUser) {
-      existingUser.points += points;
-      existingUser.name = name;
-      existingUser.location = location;
-
-      if (!existingUser.places.includes(place)) {
-        existingUser.places.push(place);
-      }
-
-      existingUser.badge = getBadge(existingUser.points);
-
-    } else {
-      users.push({
-        name,
-        email,
-        location,
-        points: points,
-        badge: getBadge(points),
-        places: [place]
-      });
-    }
-
-    localStorage.setItem("users", JSON.stringify(users));
-    renderLeaderboard();
-
-    // ✅ Clear form (smooth UX)
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("location").value = "";
-    document.getElementById("place").value = "";
-
-    alert("Submission successful 🚀");
+  if (!userPlaces.includes(place)) {
+    points += 30; // new place
+  } else {
+    points += 5; // repeat visit
   }
+
+  if (existingUser) {
+    // 🔁 UPDATE USER
+    existingUser.points += points;
+    existingUser.name = name;
+    existingUser.location = location;
+
+    if (!existingUser.places.includes(place)) {
+      existingUser.places.push(place);
+    }
+
+    existingUser.badge = getBadge(existingUser.points);
+
+  } else {
+    // 🆕 NEW USER
+    users.push({
+      name,
+      email,
+      location,
+      points: points,
+      badge: getBadge(points),
+      places: [place]
+    });
+  }
+
+  localStorage.setItem("users", JSON.stringify(users));
+  renderLeaderboard();
+
+  // ✅ Clear form
+  document.getElementById("name").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("location").value = "";
+  document.getElementById("place").value = "";
+
+  alert("Submission successful 🚀");
 }
 
 function getBadge(points) {
