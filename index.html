@@ -86,7 +86,6 @@ button {
 <div id="board"></div>
 
 </div>
-
 <script>
 let users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -102,31 +101,41 @@ function submitForm() {
     return;
   }
 
-  const reader = new FileReader();
+  // 👉 HANDLE IMAGE SAFELY
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      processSubmission(reader.result);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    processSubmission(null); // no image
+  }
 
-  reader.onload = function () {
+  function processSubmission(imageData) {
 
     // 🎯 POINT ENGINE
     let points = 10;
 
-    if (file) points += 20;
+    if (imageData) points += 20;
 
-    const userPlaces = users.find(u => u.email === email)?.places || [];
+    const existingUser = users.find(u => u.email === email);
+    const userPlaces = existingUser?.places || [];
+
     if (!userPlaces.includes(place)) {
       points += 30;
     } else {
       points += 5;
     }
 
-    // 🔍 CHECK IF USER EXISTS
-    let existingUser = users.find(u => u.email === email);
-
     if (existingUser) {
-      // 🔁 UPDATE EXISTING USER
       existingUser.points += points;
       existingUser.name = name;
       existingUser.location = location;
-      existingUser.image = file ? reader.result : existingUser.image;
+
+      if (imageData) {
+        existingUser.image = imageData;
+      }
 
       if (!existingUser.places.includes(place)) {
         existingUser.places.push(place);
@@ -135,12 +144,11 @@ function submitForm() {
       existingUser.badge = getBadge(existingUser.points);
 
     } else {
-      // 🆕 CREATE NEW USER
       users.push({
         name,
         email,
         location,
-        image: reader.result,
+        image: imageData,
         points: points,
         badge: getBadge(points),
         places: [place]
@@ -149,12 +157,9 @@ function submitForm() {
 
     localStorage.setItem("users", JSON.stringify(users));
     renderLeaderboard();
-  };
 
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    reader.onload();
+    // 🔥 UX BOOST
+    alert("Submission successful 🚀");
   }
 }
 
@@ -193,6 +198,8 @@ function renderLeaderboard() {
 
 renderLeaderboard();
 </script>
+
+        
 
 </body>
 </html>
