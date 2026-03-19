@@ -51,13 +51,6 @@ button {
   align-items: center;
 }
 
-.card img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
 .rank {
   font-weight: bold;
   margin-right: 10px;
@@ -78,7 +71,6 @@ button {
 <input type="email" id="email" placeholder="Your Email">
 <input type="text" id="location" placeholder="Where you from">
 <input type="text" id="place" placeholder="Place you visited">
-<input type="file" id="image">
 
 <button onclick="submitForm()">Submit</button>
 
@@ -86,6 +78,7 @@ button {
 <div id="board"></div>
 
 </div>
+
 <script>
 let users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -94,30 +87,18 @@ function submitForm() {
   const email = document.getElementById("email").value;
   const location = document.getElementById("location").value;
   const place = document.getElementById("place").value;
-  const file = document.getElementById("image").files[0];
 
-  if (!name || !email) {
+  if (!name || !email || !place) {
     alert("Fill all required fields");
     return;
   }
 
-  // 👉 HANDLE IMAGE SAFELY
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function () {
-      processSubmission(reader.result);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    processSubmission(null); // no image
-  }
+  processSubmission();
 
-  function processSubmission(imageData) {
+  function processSubmission() {
 
     // 🎯 POINT ENGINE
     let points = 10;
-
-    if (imageData) points += 20;
 
     const existingUser = users.find(u => u.email === email);
     const userPlaces = existingUser?.places || [];
@@ -133,10 +114,6 @@ function submitForm() {
       existingUser.name = name;
       existingUser.location = location;
 
-      if (imageData) {
-        existingUser.image = imageData;
-      }
-
       if (!existingUser.places.includes(place)) {
         existingUser.places.push(place);
       }
@@ -148,7 +125,6 @@ function submitForm() {
         name,
         email,
         location,
-        image: imageData,
         points: points,
         badge: getBadge(points),
         places: [place]
@@ -158,7 +134,12 @@ function submitForm() {
     localStorage.setItem("users", JSON.stringify(users));
     renderLeaderboard();
 
-    // 🔥 UX BOOST
+    // ✅ Clear form (smooth UX)
+    document.getElementById("name").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("place").value = "";
+
     alert("Submission successful 🚀");
   }
 }
@@ -184,7 +165,6 @@ function renderLeaderboard() {
 
     div.innerHTML = `
       <div class="rank">#${index + 1}</div>
-      <img src="${user.image || 'https://via.placeholder.com/50'}">
       <div>
         <div><strong>${user.name}</strong></div>
         <div>${user.points} pts • ${user.badge}</div>
@@ -198,8 +178,6 @@ function renderLeaderboard() {
 
 renderLeaderboard();
 </script>
-
-        
 
 </body>
 </html>
