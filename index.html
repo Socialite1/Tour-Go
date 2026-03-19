@@ -83,8 +83,6 @@ button {
 <input type="email" id="email" placeholder="Your Email">
 <input type="text" id="location" placeholder="Where you from">
 <input type="text" id="place" placeholder="Place you visited">
-<input type="number" id="points" placeholder="Points earned">
-
 <input type="file" id="image">
 
 <button onclick="submitForm()">Submit</button>
@@ -104,10 +102,9 @@ function submitForm() {
   const email = document.getElementById("email").value;
   const location = document.getElementById("location").value;
   const place = document.getElementById("place").value;
-  const points = parseInt(document.getElementById("points").value);
   const file = document.getElementById("image").files[0];
 
-  if (!name || !email || !points) {
+  if (!name || !email) {
     alert("Fill all required fields");
     return;
   }
@@ -115,6 +112,19 @@ function submitForm() {
   const reader = new FileReader();
 
   reader.onload = function () {
+
+    // 🎯 POINT ENGINE
+    let points = 10; // base
+
+    if (file) points += 20;
+
+    const alreadyVisited = users.find(u => u.place === place);
+    if (!alreadyVisited) {
+      points += 30; // new location bonus
+    } else {
+      points += 5; // repeat visit
+    }
+
     const user = {
       name,
       email,
@@ -147,7 +157,9 @@ function renderLeaderboard() {
   const board = document.getElementById("board");
   board.innerHTML = "";
 
-  const sorted = users.sort((a, b) => b.points - a.points).slice(0, 10);
+  const sorted = users
+    .sort((a, b) => b.points - a.points)
+    .slice(0, 10);
 
   sorted.forEach((user, index) => {
     const div = document.createElement("div");
