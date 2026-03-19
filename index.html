@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zartour Leaderboard</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: #020617;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #22c55e;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.leaderboard {
+  margin-top: 30px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.card img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.rank {
+  font-weight: bold;
+  margin-right: 10px;
+  color: gold;
+}
+</style>
+</head>
+
+<body>
+
+<header>Zartour Leaderboard 🏆</header>
+
+<div class="container">
+
+<h3>Submit Your Experience</h3>
+
+<input type="text" id="name" placeholder="Your Name">
+<input type="email" id="email" placeholder="Your Email">
+<input type="text" id="location" placeholder="Where you from">
+<input type="text" id="place" placeholder="Place you visited">
+<input type="number" id="points" placeholder="Points earned">
+
+<input type="file" id="image">
+
+<button onclick="submitForm()">Submit</button>
+
+<div class="leaderboard">
+<h3>Top Explorers</h3>
+<div id="board"></div>
+</div>
+
+</div>
+
+<script>
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+function submitForm() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const location = document.getElementById("location").value;
+  const place = document.getElementById("place").value;
+  const points = parseInt(document.getElementById("points").value);
+  const file = document.getElementById("image").files[0];
+
+  if (!name || !email || !points) {
+    alert("Fill all required fields");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function () {
+    const user = {
+      name,
+      email,
+      location,
+      place,
+      points,
+      image: reader.result,
+      badge: getBadge(points)
+    };
+
+    users.push(user);
+    localStorage.setItem("users", JSON.stringify(users));
+    renderLeaderboard();
+  };
+
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    reader.onload();
+  }
+}
+
+function getBadge(points) {
+  if (points > 100) return "🔥 Legend";
+  if (points > 50) return "⭐ Explorer";
+  return "🌱 Starter";
+}
+
+function renderLeaderboard() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+
+  const sorted = users.sort((a, b) => b.points - a.points).slice(0, 10);
+
+  sorted.forEach((user, index) => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <div class="rank">#${index + 1}</div>
+      <img src="${user.image || 'https://via.placeholder.com/50'}">
+      <div>
+        <div><strong>${user.name}</strong></div>
+        <div>${user.points} pts • ${user.badge}</div>
+        <small>${user.place}</small>
+      </div>
+    `;
+
+    board.appendChild(div);
+  });
+}
+
+renderLeaderboard();
+</script>
+
+</body>
+</html>
