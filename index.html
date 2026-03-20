@@ -42,14 +42,16 @@ fetch(sheetURL)
 
     top10.forEach(user => {
       html += `
-        <div class="card">
-          <img src="${user.Photo}" />
-          <div>
-            <b>${user.Name}</b><br>
-            ${user.Points} pts • ${user.Badge}
-          </div>
-        </div>
-      `;
+  <div class="card">
+    <div>#${index + 1}</div>
+    <img src="${user.Photo}" />
+    <div>
+      <b>${user.Name}</b><br>
+      ${user.Points} pts • ${user.Badge}<br>
+      📍 ${user.Visits} visits
+    </div>
+  </div>
+`;
     });
 
     document.getElementById("leaderboard").innerHTML = html;
