@@ -48,10 +48,20 @@ fetch(sheetURL)
     <div>
       <b>${user.Name}</b><br>
       ${user.Points} pts • ${user.Badge}<br>
-      📍 ${user.Visits} visits
+      📍 ${user.Visits} visits<br>
+            🔥 ${user.Streak}-day streak<br>
+      🎁 Reward: ${getReward(user.Points)}
     </div>
   </div>
 `;
+      
+
+function getReward(points) {
+  if(points >= 100) return "VIP Experience";
+  if(points >= 50) return "Gift Card";
+  if(points >= 20) return "Merch";
+  return "Digital Badge";
+}
     });
 
     document.getElementById("leaderboard").innerHTML = html;
