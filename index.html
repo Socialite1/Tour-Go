@@ -21,7 +21,6 @@
     }
   </style>
 </head>
-
 <body>
 
 <h1>🏆 Zartour Leaderboard</h1>
@@ -30,38 +29,34 @@
 <script>
 const sheetURL = "https://script.google.com/macros/s/AKfycbyNQZM11kIc2KFsubv7svoOOo_rWw1kG85BRDAHlVexOEEAYTFrDCRhY8vfgY-MDONKOA/exec";
 
-fetch(sheetURL)
-  .then(res => res.json())
-  .then(data => {
-
-    data.sort((a,b) => b.Points - a.Points);
-
-    let top10 = data.slice(0,10);
-
-    let html = "";
-
-    top10.forEach(user => {
-      html += `
-  <div class="card">
-    <div>#${index + 1}</div>
-    <img src="${user.Photo}" />
-    <div>
-      <b>${user.Name}</b><br>
-      ${user.Points} pts • ${user.Badge}<br>
-      📍 ${user.Visits} visits<br>
-            🔥 ${user.Streak}-day streak<br>
-      🎁 Reward: ${getReward(user.Points)}
-    </div>
-  </div>
-`;
-      
-
 function getReward(points) {
   if(points >= 100) return "VIP Experience";
   if(points >= 50) return "Gift Card";
   if(points >= 20) return "Merch";
   return "Digital Badge";
 }
+
+fetch(sheetURL)
+  .then(res => res.json())
+  .then(data => {
+    data.sort((a,b) => b.Points - a.Points);
+    let top10 = data.slice(0,10);
+
+    let html = "";
+    top10.forEach((user, index) => {
+      html += `
+        <div class="card">
+          <div>#${index + 1}</div>
+          <img src="${user.Photo}" />
+          <div>
+            <b>${user.Name}</b><br>
+            ${user.Points} pts • ${user.Badge}<br>
+            📍 ${user.Visits.length} visits<br>
+            🔥 ${user.Streak}-day streak<br>
+            🎁 Reward: ${user.Reward}
+          </div>
+        </div>
+      `;
     });
 
     document.getElementById("leaderboard").innerHTML = html;
