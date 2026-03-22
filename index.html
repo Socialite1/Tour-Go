@@ -97,6 +97,16 @@
 <script>
 const sheetURL = "https://script.google.com/macros/s/AKfycbyNQZM11kIc2KFsubv7svoOOo_rWw1kG85BRDAHlVexOEEAYTFrDCRhY8vfgY-MDONKOA/exec";
 
+// 🔥 SMART NAME HANDLER
+function getName(user) {
+  return user.Name ||
+         user.name ||
+         user["Full Name"] ||
+         user.Participant ||
+         user.Username ||
+         "Guest";
+}
+
 function getReward(points) {
   points = Number(points) || 0;
   if(points >= 100) return "VIP Experience";
@@ -147,11 +157,13 @@ fetch(sheetURL)
           <img src="${user.Photo || 'https://via.placeholder.com/50'}" />
 
           <div class="info">
-            <div class="name">${user.Name || "Unknown"}</div>
+            <div class="name">${getName(user)}</div>
+
             <div class="meta">
               ${Number(user.Points) || 0} pts • ${user.Badge || "No badge"}<br>
               📍 ${visits} visits • 🔥 ${user.Streak || 0} day streak
             </div>
+
             <div class="reward">
               🎁 ${getReward(user.Points)}
             </div>
@@ -160,7 +172,8 @@ fetch(sheetURL)
       `;
     });
 
-    document.getElementById("leaderboard").innerHTML = html || "<div class='error'>No data yet</div>";
+    document.getElementById("leaderboard").innerHTML =
+      html || "<div class='error'>No data yet</div>";
   })
   .catch(err => {
     console.error(err);
