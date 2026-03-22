@@ -135,25 +135,24 @@
   </div>
 
 <script>
-// IMPORTANT: Replace with your actual Jotform API endpoint or Google Apps Script URL
-// For demo with your exact data structure, using embedded data source
-const ZARTOUR_DATA_SOURCE = [
-  {"Submission Date":"2026-03-03T15:47:23.000Z","Full Name - First Name":"Thato","Full Name - Last Name":"Africa","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"25-34","Gender":"","Are you a tourist or a local?":"Local","Route Type":"Weekly","Location Name (hidden)":"Waterfront","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6483548421295166793/IMG-20260302-WA0012.jpg","Share a quick feedback about your experience today:":"Awesome","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":"","Submission ID":"6483548421295166793","Points":15,"Badge":"Beginner"},
-  {"Submission Date":"2026-03-05T07:44:22.000Z","Full Name - First Name":"Thato","Full Name - Last Name":"Goodwill Sekgololo","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"25-34","Gender":"","Are you a tourist or a local?":"Local","Route Type":"Weekly","Location Name (hidden)":"Waterfront Dam","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6484986607466844773/IMG-20251229-WA0026.jpg","Share a quick feedback about your experience today:":"The view here is something else breathtaking","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":"","Submission ID":"6484986607466844773","Points":15,"Badge":"Beginner"},
-  {"Submission Date":"2026-03-20T06:04:13.000Z","Full Name - First Name":"Thato","Full Name - Last Name":"Sekgololo","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"25-34","Gender":"Male","Are you a tourist or a local?":"Local Tourist","Route Type":"Bakgaga Tour Experience","Location Name (hidden)":"Pele Re Yago","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6497886530456948595/image-7236184666729181353.jpg","Share a quick feedback about your experience today:":"Peace and Quietness","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":3,"Submission ID":"6497886530456948595","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T06:51:43.000Z","Full Name - First Name":"Ayana","Full Name - Last Name":"Thobejane","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"Under 18","Gender":"Female","Are you a tourist or a local?":"Local Tourist","Route Type":"Chill With Crew Experience","Location Name (hidden)":"Home","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6497915036112907871/image-7081185981566848844.jpg","Share a quick feedback about your experience today:":"Feel free to be home","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":4,"Submission ID":"6497915036112907871","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T07:00:25.000Z","Full Name - First Name":"Daisy","Full Name - Last Name":"Sekgololo","Phone Number (South African format)":"(071) 516-2275","Email Address":"sekgololord@gmail.com","Age Group":"45-54","Gender":"Female","Are you a tourist or a local?":"Provincial Tourist","Route Type":"Bakgaga Tour Experience","Location Name (hidden)":"Jozi","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6497920250456698411/image-3929428456475712356.jpg","Share a quick feedback about your experience today:":"Busy place","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":3,"Submission ID":"6497920250456698411","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T07:25:36.000Z","Full Name - First Name":"Teedo","Full Name - Last Name":"Val","Phone Number (South African format)":"(072) 824-1471","Email Address":"mlekes@mail.com","Age Group":"45-54","Gender":"Male","Are you a tourist or a local?":"Local Tourist","Route Type":"The Soccer Tour-Nament League","Location Name (hidden)":"Hillside","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6497935366117662662/image-6844106752972992061.jpg","Share a quick feedback about your experience today:":"Nice matches","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":4,"Submission ID":"6497935366117662662","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T09:38:49.000Z","Full Name - First Name":"Aga","Full Name - Last Name":"Africa","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"25-34","Gender":"Male","Are you a tourist or a local?":"Local Tourist","Route Type":"The Soccer Tour-Nament League","Location Name (hidden)":"Thamagane","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6498015290453753674/image-4023675298115629155.jpg","Share a quick feedback about your experience today:":"Nice","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":3,"Submission ID":"6498015290453753674","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T10:14:18.000Z","Full Name - First Name":"Aga","Full Name - Last Name":"Africa","Phone Number (South African format)":"(060) 799-6938","Email Address":"tgsekgololo@gmail.com","Age Group":"25-34","Gender":"Male","Are you a tourist or a local?":"Local Tourist","Route Type":"Bakgaga Tour Experience","Location Name (hidden)":"Zone 14","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6498036586117578209/image-5414306207084321223.jpg","Share a quick feedback about your experience today:":"Nice","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":3,"Submission ID":"6498036586117578209","Points":"","Badge":""},
-  {"Submission Date":"2026-03-20T10:48:00.000Z","Full Name - First Name":"Tokelo","Full Name - Last Name":"mogoshedi","Phone Number (South African format)":"(079) 833-7471","Email Address":"tokelosefala11@gmail.com","Age Group":"35-44","Gender":"Female","Are you a tourist or a local?":"Local Tourist","Route Type":"Bakgaga Tour Experience","Location Name (hidden)":"bedroom","Upload a Selfie to check in":"https://www.jotform.com/uploads/tgsekgololo/260613463081047/6498056800124593885/17739963947436070021411499474570.jpg","Share a quick feedback about your experience today:":"relaxing","I consent to the collection and processing of my information for Zartour check-in and rewards purposes.":"Accepted","Rate the Experience of Visited Location":5,"Submission ID":"6498056800114593885","Points":"","Badge":""}
-];
+// -----------------------------
+// LIVE DATA CONFIG
+// -----------------------------
+// Keep this null if you want to force using live API only.
+// If your Apps Script is not ready yet, you can temporarily
+// plug the ZARTOUR_DATA_SOURCE back in for local testing.
 
-// Replace this URL with your actual Google Apps Script or Jotform API endpoint
-// const LIVE_API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
-const LIVE_API_URL = "https://script.google.com/macros/s/AKfycbyNQZM11kIc2KFsubv7svoOOo_rWw1kG85BRDAHlVexOEEAYTFrDCRhY8vfgY-MDONKOA/exec"; // Set to null to use embedded data above
+// REAL Google Apps Script Web App URL (must return JSON array)
+const LIVE_API_URL = "https://script.google.com/macros/s/AKfycbyNQZM11kIc2KFsubv7svoOOo_rWw1kG85BRDAHlVexOEEAYTFrDCRhY8vfgY-MDONKOA/exec";
 
-// Helper functions (same as before but optimized)
+// OPTIONAL: fallback local data for offline dev.
+// Remove this constant once you confirm LIVE_API_URL works.
+// (You asked to remove dummy data, so keep this commented out.)
+// const ZARTOUR_DATA_SOURCE = [ ...your sample objects... ];
+
+// -----------------------------
+// Helper functions
+// -----------------------------
 function getFullName(entry) {
   return `${entry["Full Name - First Name"] || ''} ${entry["Full Name - Last Name"] || ''}`.trim() || 'Anonymous Explorer';
 }
@@ -183,7 +182,9 @@ function calculateStreak(submissions) {
   return uniqueDates.length;
 }
 
-// Process raw Jotform data into leaderboard format
+// -----------------------------
+// Transform raw data -> leaderboard
+// -----------------------------
 function processData(rawData) {
   const userMap = {};
   
@@ -232,23 +233,20 @@ function processData(rawData) {
   });
 }
 
-// Fetch live data and generate leaderboard
+// -----------------------------
+// Fetch live data and render
+// -----------------------------
 async function fetchAndRenderLeaderboard() {
   try {
     document.getElementById("leaderboard").innerHTML = '<div class="loading">🔄 Loading live Zartour data...</div>';
     
     let rawData;
-    
-    if (LIVE_API_URL) {
-      // Live fetch from your API
-      const response = await fetch(LIVE_API_URL);
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
-      rawData = await response.json();
-    } else {
-      // Use embedded data (your actual Jotform submissions)
-      rawData = ZARTOUR_DATA_SOURCE;
-    }
-    
+
+    // Use live API only – no dummy data
+    const response = await fetch(LIVE_API_URL);
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    rawData = await response.json();
+
     const processedData = processData(rawData);
     const sortedData = processedData.sort((a, b) => b.Points - a.Points);
     
