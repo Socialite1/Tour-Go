@@ -2,64 +2,170 @@
 <html>
 <head>
   <title>Zartour Leaderboard</title>
+
   <style>
-    body { font-family: Arial; background:#0f172a; color:white; }
-    h1 { text-align:center; }
-    .card {
-      background:#1e293b;
-      margin:10px;
-      padding:10px;
-      border-radius:10px;
-      display:flex;
-      align-items:center;
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      margin: 0;
+      padding: 0;
     }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(to right, #2563eb, #f97316);
+      margin: 0;
+    }
+
+    #leaderboard {
+      padding: 10px;
+    }
+
+    .card {
+      background: #1e293b;
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .rank {
+      font-size: 20px;
+      width: 40px;
+      text-align: center;
+    }
+
+    .gold { color: gold; }
+    .silver { color: silver; }
+    .bronze { color: #cd7f32; }
+
     img {
-      width:50px;
-      height:50px;
-      border-radius:50%;
-      margin-right:10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 0 10px;
+      object-fit: cover;
+      background: #334155;
+    }
+
+    .info {
+      flex: 1;
+    }
+
+    .name {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #cbd5f5;
+    }
+
+    .reward {
+      font-size: 12px;
+      margin-top: 4px;
+      color: #facc15;
+    }
+
+    .loading, .error {
+      text-align: center;
+      padding: 20px;
+      font-size: 16px;
     }
   </style>
 </head>
+
 <body>
 
 <h1>🏆 Zartour Leaderboard</h1>
-<div id="leaderboard"></div>
+
+<div id="leaderboard">
+  <div class="loading">Loading leaders...</div>
+</div>
 
 <script>
 const sheetURL = "https://script.google.com/macros/s/AKfycbyNQZM11kIc2KFsubv7svoOOo_rWw1kG85BRDAHlVexOEEAYTFrDCRhY8vfgY-MDONKOA/exec";
 
 function getReward(points) {
+  points = Number(points) || 0;
   if(points >= 100) return "VIP Experience";
   if(points >= 50) return "Gift Card";
   if(points >= 20) return "Merch";
   return "Digital Badge";
 }
 
+function getRankClass(index) {
+  if(index === 0) return "gold";
+  if(index === 1) return "silver";
+  if(index === 2) return "bronze";
+  return "";
+}
+
 fetch(sheetURL)
   .then(res => res.json())
   .then(data => {
-    data.sort((a,b) => b.Points - a.Points);
+    console.log("DATA:", data);
+
+    if(!Array.isArray(data)) throw new Error("Invalid data format");
+
+    data.sort((a,b) => (Number(b.Points)||0) - (Number(a.Points)||0));
+
     let top10 = data.slice(0,10);
 
     let html = "";
+
     top10.forEach((user, index) => {
+      let visits = 0;
+
+      if(user.Visits) {
+        try {
+          visits = Array.isArray(user.Visits)
+            ? user.Visits.length
+            : String(user.Visits).split(",").length;
+        } catch {
+          visits = 0;
+        }
+      }
+
       html += `
         <div class="card">
-          <div>#${index + 1}</div>
-          <img src="${user.Photo}" />
-          <div>
-            <b>${user.Name}</b><br>
-            ${user.Points} pts • ${user.Badge}<br>
-            📍 ${user.Visits.length} visits<br>
-            🔥 ${user.Streak}-day streak<br>
-            🎁 Reward: ${user.Reward}
+          <div class="rank ${getRankClass(index)}">
+            ${index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : "#" + (index+1)}
+          </div>
+
+          <img src="${user.Photo || 'https://via.placeholder.com/50'}" />
+
+          <div class="info">
+            <div class="name">${user.Name || "Unknown"}</div>
+            <div class="meta">
+              ${Number(user.Points) || 0} pts • ${user.Badge || "No badge"}<br>
+              📍 ${visits} visits • 🔥 ${user.Streak || 0} day streak
+            </div>
+            <div class="reward">
+              🎁 ${getReward(user.Points)}
+            </div>
           </div>
         </div>
       `;
     });
 
-    document.getElementById("leaderboard").innerHTML = html;
+    document.getElementById("leaderboard").innerHTML = html || "<div class='error'>No data yet</div>";
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("leaderboard").innerHTML =
+      "<div class='error'>⚠️ Failed to load leaderboard</div>";
   });
 </script>
 
